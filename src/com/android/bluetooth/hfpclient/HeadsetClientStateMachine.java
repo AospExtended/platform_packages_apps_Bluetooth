@@ -743,8 +743,12 @@ public class HeadsetClientStateMachine extends StateMachine {
     static int hfToAmVol(int hfVol) {
         int amRange = mMaxAmVcVol - mMinAmVcVol;
         int hfRange = MAX_HFP_SCO_VOICE_CALL_VOLUME - MIN_HFP_SCO_VOICE_CALL_VOLUME;
+        if (hfRange <= 0) {
+            Log.e(TAG, "ERROR: hfRange is less than or equal to zero: " + hfRange);
+            hfRange = 1;
+        }
         int amOffset =
-            (amRange * (hfVol - MIN_HFP_SCO_VOICE_CALL_VOLUME)) / hfRange;
+                (amRange * (hfVol - MIN_HFP_SCO_VOICE_CALL_VOLUME)) / hfRange;
         int amVol = mMinAmVcVol + amOffset;
         Log.d(TAG, "HF -> AM " + hfVol + " " + amVol);
         return amVol;
@@ -752,6 +756,10 @@ public class HeadsetClientStateMachine extends StateMachine {
 
     static int amToHfVol(int amVol) {
         int amRange = mMaxAmVcVol - mMinAmVcVol;
+        if (amRange <= 0) {
+            Log.e(TAG, "ERROR: amRange is less than or equal to zero: " + amRange);
+            amRange = 1;
+        }
         int hfRange = MAX_HFP_SCO_VOICE_CALL_VOLUME - MIN_HFP_SCO_VOICE_CALL_VOLUME;
         int hfOffset = (hfRange * (amVol - mMinAmVcVol)) / amRange;
         int hfVol = MIN_HFP_SCO_VOICE_CALL_VOLUME + hfOffset;
