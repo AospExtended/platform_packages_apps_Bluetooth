@@ -139,7 +139,8 @@ public class BluetoothPbapService extends ProfileService implements IObexConnect
     private ObexServerSockets mServerSockets = null;
 
     private static final int SDP_PBAP_SERVER_VERSION = 0x0102;
-    private static final int SDP_PBAP_SUPPORTED_REPOSITORIES = 0x0001;
+    // PBAP v1.2.3, Sec. 7.1.2: local phonebook and favorites
+    private static final int SDP_PBAP_SUPPORTED_REPOSITORIES = 0x0009;
     private static final int SDP_PBAP_SUPPORTED_FEATURES = 0x021F;
 
     /* PBAP will use Bluetooth notification ID from 1000000 (included) to 2000000 (excluded).
@@ -425,7 +426,8 @@ public class BluetoothPbapService extends ProfileService implements IObexConnect
      * {@link BluetoothProfile#STATE_DISCONNECTING}
      */
     public int getConnectionState(BluetoothDevice device) {
-        enforceCallingOrSelfPermission(BLUETOOTH_PERM, "Need BLUETOOTH permission");
+        enforceCallingOrSelfPermission(
+                BLUETOOTH_PRIVILEGED, "Need BLUETOOTH_PRIVILEGED permission");
         if (mPbapStateMachineMap == null) {
             return BluetoothProfile.STATE_DISCONNECTED;
         }
@@ -481,7 +483,8 @@ public class BluetoothPbapService extends ProfileService implements IObexConnect
      * @return true if pbap is disconnected, false otherwise
      */
     public boolean setConnectionPolicy(BluetoothDevice device, int connectionPolicy) {
-        enforceCallingOrSelfPermission(BLUETOOTH_ADMIN_PERM, "Need BLUETOOTH_ADMIN permission");
+        enforceCallingOrSelfPermission(
+                BLUETOOTH_PRIVILEGED, "Need BLUETOOTH_PRIVILEGED permission");
         if (DEBUG) {
             Log.d(TAG, "setConnectionPolicy: device " + device
                     + " and connectionPolicy " + connectionPolicy);

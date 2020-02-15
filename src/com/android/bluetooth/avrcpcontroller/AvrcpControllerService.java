@@ -172,9 +172,11 @@ public class AvrcpControllerService extends ProfileService {
             }
         }
 
+        // If we don't find a node in the tree then do not have any way to browse for the contents.
+        // Return an empty list instead.
         if (requestedNode == null) {
             if (DBG) Log.d(TAG, "Didn't find a node");
-            return null;
+            return new ArrayList(0);
         } else {
             if (!requestedNode.isCached()) {
                 if (DBG) Log.d(TAG, "node is not cached");
@@ -432,6 +434,18 @@ public class AvrcpControllerService extends ProfileService {
             stateMachine.sendMessage(
                     AvrcpControllerStateMachine.MESSAGE_PROCESS_CURRENT_APPLICATION_SETTINGS,
                     currentSettings);
+        }
+    }
+
+    private void onAvailablePlayerChanged(byte[] address) {
+        if (DBG) {
+            Log.d(TAG," onAvailablePlayerChanged");
+        }
+        BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address);
+
+        AvrcpControllerStateMachine stateMachine = getStateMachine(device);
+        if (stateMachine != null) {
+            stateMachine.sendMessage(AvrcpControllerStateMachine.MESSAGE_PROCESS_AVAILABLE_PLAYER_CHANGED);
         }
     }
 
